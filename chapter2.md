@@ -15,3 +15,38 @@ let age = 20
 let age:number;
 ```
 2. 接口
+```
+// 接口
+interface Person {
+  name: string,
+  age: number
+}
+function printName(person: Person) {
+  console.log('person.name')
+}
+const john = { name: 'john', age: 21 }
+const mary = { name: 'mary', age: 12, phone: '021-1234545656' }
+printName(john)
+printName(mary)
+const errorP = { name: 1, age: 13 }
+printName(errorP)  //此行在编译时将报错
+```
+上面ts 转换为js只是普通的js
+```
+function printName(person) {
+    console.log('person.name');
+}
+var john = { name: 'john', age: 21 };
+var mary = { name: 'mary', age: 12, phone: '021-1234545656' };
+printName(john);
+printName(mary);
+var errorP = { name: 1, age: 13 };
+printName(errorP);
+```
+但是在上面的代码中最后一行，编译时会报错
+```
+datatype.ts(25,11): error TS2345: Argument of type '{ name: number; age: number; }' is not assignable to parameter of type 'Person'.
+  Types of property 'name' are incompatible.
+    Type 'number' is not assignable to type 'string'.
+```
+<b>注意：代码补全以及类型和错误检查只在编译时时可用的</b>
