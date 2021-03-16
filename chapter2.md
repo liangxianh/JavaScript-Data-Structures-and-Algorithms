@@ -1,13 +1,13 @@
-### ECMAScript he Typescipt概述
+## ECMAScript he Typescipt概述
 
-#### ECMASscript简单介绍
+### ECMASscript简单介绍
 1. export import
 ```
 当导出只有一个默认是 export default class Book
 引入时 直接引入即可 不需要{} 多个时需要需要{}
 ```
 
-#### Typescript
+### Typescript
 1. 类型判断
 ```
 let age:number = 20
@@ -50,3 +50,17 @@ datatype.ts(25,11): error TS2345: Argument of type '{ name: number; age: number;
     Type 'number' is not assignable to type 'string'.
 ```
 <b>注意：代码补全以及类型和错误检查只在编译时时可用的</b>
+
+3. 泛型,用尖括号向Comparable接口动态传入T类型，可以指定compareTo函数的参数类型
+```
+interface Comparable<T> {
+  compareTo(b: T): number;
+}
+```
+### Typescript中对javascript文件的编译时检查
+1. 在计算机上全局安装ts
+2. 在js文件<b>第一行<b>添加//@ts-check
+```
+
+```
+
