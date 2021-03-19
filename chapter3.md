@@ -117,13 +117,36 @@ const numbers4 = [1, 2, 3, 4, 5, 6]
 const numbersCopy = Array.of(...numbers4);
 ```
 
-6. fill方法
+6. fill方法用静态值填充数组，fill(value, startIndex, lastIndex),包含startIndex，不包含lastIndex
+```
+const numbers4 = Array.of(1, 2, 3, 4, 5, 6);
+numbersCopy.fill(0);
+console.log('numbersCopy.fill(0)', numbersCopy); // (6) [0, 0, 0, 0, 0, 0]
+
+numbersCopy.fill(2, 1);
+console.log('numbersCopy.fill(2, 1)', numbersCopy); // (6) [0, 2, 2, 2, 2, 2]
+
+numbersCopy.fill(1, 3, 5);
+console.log('numbersCopy.fill(1, 3, 5)', numbersCopy); // (6) [0, 2, 2, 1, 1, 2]
+
+const ones = Array(6).fill(1);
+console.log('Array(6).fill(1)', ones); // (6) [1, 1, 1, 1, 1, 1]
 ```
 
+7. copyWithin方法复制数组中的一系列元素到同一数组指定的起始位置，copyWithin(需要被替换开始的index, 想要复制的元素开始的index[,想要复制的元素的结束index])
 ```
+let copyArray = [1, 2, 3, 4, 5, 6];
+console.log('copyArray', copyArray); // copyArray (6) [1, 2, 3, 4, 5, 6]
 
-7. copyWithin方法
-```
+copyArray = copyArray.copyWithin(0, 3); // pos 3 value is copied to pos 0
+console.log('copyArray.copyWithin(0, 3)', copyArray); // copyArray.copyWithin(0, 3) (6) [4, 5, 6, 4, 5, 6]
 
+copyArray = [1, 2, 3, 4, 5, 6];
+copyArray = copyArray.copyWithin(1, 3, 5); // pos 3-4 values are copied to pos 1-2
+console.log('copyArray.copyWithin(1, 3, 5)', copyArray); // copyArray.copyWithin(1, 3, 5) (6) [1, 4, 5, 4, 5, 6]
+
+copyArray = [1, 2, 3, 4, 5, 6];
+copyArray = copyArray.copyWithin(2, 3, 5); // pos 3-4 values are copied to pos 1-2
+console.log('copyArray.copyWithin(2, 3, 5)', copyArray); // copyArray.copyWithin(2, 3, 5) (6) [1, 2, 4, 5, 5, 6]
 ```
 
