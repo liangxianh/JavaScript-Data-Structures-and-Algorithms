@@ -1,6 +1,6 @@
 ## 数组
 
-### 数组方法
+### 一 数组方法
 1. map 对数组中的每个元素进行给定函数，返回每次函数调用的结果组成的数组
 2. filter对数组中的每个元素进行给定函数，返回该函数会返回true的元素组成的数组
 3. reduce（previousValue,currentValue[,index][,array]）
@@ -22,7 +22,7 @@ console.log('negativeNumbers.concat(obj, positiveNumbers)', concatObj);
 // 05-ArrayMethods.js:19 negativeNumbers.concat(obj, positiveNumbers) (7) [-3, -2, -1, {value：1}, 1, 2, 3]
 ```
 
-### ECMAScript6和数组新功能
+### 二 ECMAScript6和数组新功能
 1. for...of
 ```
 //* ********* using for..of loop
@@ -149,4 +149,19 @@ copyArray = [1, 2, 3, 4, 5, 6];
 copyArray = copyArray.copyWithin(2, 3, 5); // pos 3-4 values are copied to pos 1-2
 console.log('copyArray.copyWithin(2, 3, 5)', copyArray); // copyArray.copyWithin(2, 3, 5) (6) [1, 2, 4, 5, 5, 6]
 ```
-
+### 三 数组排序
+### 四 搜索
+1. find findIndex接收一个回调函数，搜索一个满足回调函数条件的值；find 返回第一个满足条件的值，或者undefined；findIndex返回满足条件的值在数组里面的索引，或-1
+```
+function multipleOf13(element) {
+  return element % 13 === 0;
+}
+console.log('numbers.find(multipleOf13)', numbers.find(multipleOf13));
+console.log('numbers.findIndex(multipleOf13)', numbers.findIndex(multipleOf13));
+```
+2. includes如果数组里存在某个元素则返回true，否则返回 false; 语法：arr.includes(ele) || arr.includes(ele, startIndex)
+```
+const numbers5 = [7, 6, 5, 4, 3, 2, 1];
+console.log(numbers.includes(4)) // true
+// 从数组下标为5开始查找
+console.log('numbers5.includes(4, 5)', numbers5.includes(4, 5)); // false
