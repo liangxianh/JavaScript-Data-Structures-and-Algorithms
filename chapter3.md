@@ -36,9 +36,94 @@ for (let k of numbers) {
 ```
 
 2. 使用@@iterator对象，es2015新增，需要通过Symbol.iterator来访问
+```
+console.log('Using the new ES6 iterator (@@iterator)');
+const numbers = [1, 2, 3, 4];
+let iterator = numbers[Symbol.iterator]();
+console.log('iterator', iterator); //iterator Array Iterator {}
+console.log('iterator.next().value', iterator.next().value); // 1
+console.log('iterator.next().value', iterator.next().value); // 2
+console.log('iterator.next().value', iterator.next().value); // 3
+console.log('iterator.next().value', iterator.next().value); // 4
+console.log('iterator.next().value', iterator.next().value); // undefined
+```
+```
+let iterator = numbers[Symbol.iterator](); //iterator Array Iterator {}
+console.log('iterator.next().value', iterator.next().value); // 1
+for (const n of iterator) {
+  console.log(`${n} of iterator`, n);
+}
+打印结果，及next后的数据在iterator中不在存在
+// iterator.next().value 1
+// 2 of iterator 2
+// 3 of iterator 3
+// 4 of iterator 4
+可以直接用for...of 或数组元素较少的情况直接是有next，
+```
+
 3. 数组的entries keys values方法
-4. form方法
-5. Array.of方法
+> entries方法返回包含键值对的@@iterator
+```
+let aEntries = numbers.entries(); // retrieve iterator of key/value
+console.log('aEntries.next().value', aEntries.next().value); // [0, 1] - position 0, value 1
+console.log('aEntries.next().value', aEntries.next().value); // [1, 2] - position 1, value 2
+console.log('aEntries.next().value', aEntries.next().value); // [2, 3] - position 2, value 3
+console.log('aEntries.next().value', aEntries.next().value); // [3, 4]
+console.log('aEntries.next().value', aEntries.next().value); //undefined
+// or use code below
+aEntries = numbers.entries();
+for (const n of aEntries) {
+  console.log(`entry of ${n}`, n);
+}
+``` 
+> keys方法返回包含数组索引的@@iterator，keys方法返回numbers数组的索引，一旦没有可迭代的值，aKeys.next()就会返回一个value属性为undefined、done属性为true的对象，done为false说明仍然可迭代
+```
+const aKeys = numbers.keys(); // retrieve iterator of keys
+console.log('aKeys.next()', aKeys.next()); // {value: 0, done: false } done false means iterator has more values
+console.log('aKeys.next()', aKeys.next()); // {value: 1, done: false }
+console.log('aKeys.next()', aKeys.next()); // {value: 2, done: false }
+console.log('aKeys.next()', aKeys.next()); // {value: 3, done: false}
+console.log('aKeys.next()', aKeys.next()); // {value: undefined, done: true}
+```
+> values方法返回的@@iterator则包含数组的值 （有兼容性问题）
+```
+const aValues = numbers.values();
+console.log(aValues.next()); // {value: 1, done: false } done false means iterator has more values
+console.log(aValues.next()); // {value: 2, done: false }
+console.log(aValues.next()); // {value: 3, done: false }
+console.log(aValues.next()); // {value: 4, done: false}
+console.log(aValues.next()); // {value: undefined, done: true}
+```
+
+4. form, Array.form方法根据已有的数组创建一个新数组。比如赋值numbers, <b>新建的数组属于深拷贝</b>
+```
+let numbersCopy1 = Array.from(numbers)
+console.log('numbersCopy1', numbersCopy1) // numbersCopy1 (4) [1, 2, 3, 4]
+numbersCopy1[1] = 90
+console.log('numbersCopy1=', numbersCopy1, 'numbers=', numbers) // numbersCopy1= (4) [1, 90, 3, 4] numbers= (4) [1, 2, 3, 4]
+
+const evens = Array.from(numbers, x => x % 2 === 0);
+console.log('Array.from(numbers, x => x % 2 === 0)', evens); // Array.from(numbers, x => x % 2 === 0) (4) [false, true, false, true]
+```
+
+5. Array.of方法根据传入的参数创建一个新数组，类似array.form
+```
+const numbers3 = Array.of(1);
+const numbers4 = Array.of(1, 2, 3, 4, 5, 6);
+// 同下面效果一样
+const numbers3 = [1]
+const numbers4 = [1, 2, 3, 4, 5, 6]
+// 也可以用下面的方法复制已有数组
+const numbersCopy = Array.of(...numbers4);
+```
+
 6. fill方法
+```
+
+```
+
 7. copyWithin方法
-8. 
+```
+
+```
+
