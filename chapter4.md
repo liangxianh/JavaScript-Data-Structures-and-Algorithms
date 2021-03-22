@@ -45,7 +45,7 @@ const stack = new Stack()
 
 > 优化栈，在最上面创建栈方式不能声明私有属性，下面两种方式可以参考
 ```
-// 下面方法创建了一个假的私有属性
+// 下面方法创建了一个假的私有属性, 使用es2015的限定作用域Symbol实现类
 const sitems = Symbol('stackItems')
 class Stackone {
   constructor() {
