@@ -42,3 +42,27 @@ class Stack {
 ```
 const stack = new Stack()
 ```
+
+> 优化栈，在最上面创建栈方式不能声明私有属性，下面两种方式可以参考
+```
+// 下面方法创建了一个假的私有属性
+const sitems = Symbol('stackItems')
+class Stackone {
+  constructor() {
+    console.log('symbol----', sitems)
+    this[sitems] = []
+  }
+}
+
+// WeakMap这种数据类型可以确保属性是私有的，采用下面的做法代码可读性不强，扩展该类时无法继承私有属性
+const mapitems = new WeakMap()
+class Stacktwo {
+  constructor() {
+    console.log('weakmap----', mapitems)
+    mapitems.set(this, [])
+  }
+}
+
+console.log('new Stackone', new Stackone())
+console.log('new Stacktwo', new Stacktwo())
+```
