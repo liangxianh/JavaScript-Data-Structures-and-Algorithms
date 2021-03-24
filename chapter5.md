@@ -104,7 +104,45 @@ console.log(queue.toString()); // Camila
 3. 使用队列解决问题
 > 击鼓传花游戏
 ```
+const { Queue } = PacktDataStructuresAlgorithms;
 
+function hotPotato(elementsList, num) {
+  const queue = new Queue()
+  const elimitatedList = []
+
+  for (let i = 0; i < elementsList.length; i++) {
+    queue.enqueue(elementsList[i])
+  }
+
+  while (queue.size() > 1) {
+    // num 可以随机
+    // let num = Math.ceil(Math.random(1,30) * 30)
+    for (let i = 0; i < num; i++) {
+      queue.enqueue(queue.dequeue())
+    }
+    elimitatedList.push(queue.dequeue())
+  }
+
+  return {
+    eliminated: elimitatedList,
+    winner: queue.dequeue()
+  }
+}
+const names = ['John1', 'Jack2', 'Camila3', 'Ingrid4', 'Carl5'];
+const result = hotPotato(names, 7);
+
+result.eliminated.forEach(name => {
+  console.log(`${name} was eliminated from the Hot Potato game.`);
+});
+
+console.log(`The winner is: ${result.winner}`);
+
+// Camila3 was eliminated from the Hot Potato game.
+// Jack2 was eliminated from the Hot Potato game.
+// Carl5 was eliminated from the Hot Potato game.
+// Ingrid4 was eliminated from the Hot Potato game.
+// The winner is: John1
+// 上例子中每次设置了固定个数的传递，会存在预测性，如果每次的num不通过呢？
 ```
 
 
