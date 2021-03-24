@@ -145,5 +145,41 @@ console.log(`The winner is: ${result.winner}`);
 // 上例子中每次设置了固定个数的传递，会存在预测性，如果每次的num不通过呢？
 ```
 
+> 回文检查 回文，指汉语中的回文语法，即把相同的词汇或句子，在下文中调换位置或颠倒过来，产生首尾回环的情况，叫做回文，也叫回环。
+```
+const { Deque } = PacktDataStructuresAlgorithms;
+function palindromeChecker(aString) {
+  // 先判断字符串的合法性
+  if (aString === undefined || aString === null || (aString !== null && aString.length === 0)) {
+    return false
+  }
+  const deque = new Deque()
+  const lowerString = aString.toLowerCase().split(' ').join('')
+  let isEqual = true
+  let firstChar, lastChar
 
+  for (let i = 0; i < lowerString.length; i++) {
+    deque.addBack(lowerString.charAt(i))
+  }
+
+  while (deque.size() > 1 && isEqual) {
+    firstChar = deque.removeFront()
+    lastChar = deque.removeBack()
+    if (firstChar !== lastChar) {
+      isEqual = false
+    }
+  }
+
+  return isEqual
+}
+console.log('a', palindromeChecker('a')); //true
+console.log('aa', palindromeChecker('aa')); //true
+console.log('kayak', palindromeChecker('kayak')); //true
+console.log('level', palindromeChecker('level')); //true
+console.log('Was it a car or a cat I saw', palindromeChecker('Was it a car or a cat I saw')); //true
+console.log('Was it a car or a catI saw', palindromeChecker('Was it a car or a catI saw')); //true
+console.log('Was it a car ,r a cat I saw', palindromeChecker('Was it a car ,r a catI saw')); //true
+console.log('Step on no pets', palindromeChecker('Step on no pets')); //true
+
+```
 
