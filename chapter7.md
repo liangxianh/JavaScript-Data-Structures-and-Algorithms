@@ -86,3 +86,131 @@ set.delete(2);
 console.log(set.values()); // outputs []
 ```
 
+> 集合的运算
+```
+// 并集
+  union(otherSet) {
+    const unionSet = new Set()
+    this.values().forEach(value => unionSet.add(value))
+    otherSet.values().forEach(value => unionSet.add(value))
+    return unionSet
+  }
+  // 交集
+  intersection(otherSet) {
+    const intersectionSet = new Set()
+    const values = this.values()
+    for(let i = 0; i < values.length; i++) {
+      if (otherSet.has(values[i])) {
+        intersectionSet.add(values[i])
+      }
+    }
+    return intersectionSet
+  }
+  // 差集
+  difference(otherSet) {
+    const differenceSet = new Set()
+    const values = this.values()
+    this.values().forEach(value => {
+      if (!otherSet.has(value)) {
+        differenceSet.add(value)
+      }
+    })
+    // for(let i = 0; i < values.length; i++) {
+    // }
+    return differenceSet
+  }
+  // 子集
+  isSubsetOf(otherSet){
+    if (this.size() > otherSet.size()) {
+      return false
+    }
+    let isSubset = true
+    this.values().every(value => {
+      if (!otherSet.has(value)) {
+        isSubset = false
+        return false
+      }
+      return true
+    })
+    return isSubset
+  }
+```
+```
+// --------- Union ----------
+
+let setA = new Set();
+setA.add(1);
+setA.add(2);
+setA.add(3);
+
+let setB = new Set();
+setB.add(3);
+setB.add(4);
+setB.add(5);
+setB.add(6);
+
+const unionAB = setA.union(setB);
+console.log(unionAB.values()); // [1, 2, 3, 4, 5, 6]
+
+// --------- Intersection ----------
+
+setA = new Set();
+setA.add(1);
+setA.add(2);
+setA.add(3);
+
+setB = new Set();
+setB.add(2);
+setB.add(3);
+setB.add(4);
+
+const intersectionAB = setA.intersection(setB);
+console.log(intersectionAB.values()); // [2, 3]
+
+// --------- Difference ----------
+
+setA = new Set();
+setA.add(1);
+setA.add(2);
+setA.add(3);
+
+setB = new Set();
+setB.add(2);
+setB.add(3);
+setB.add(4);
+
+const differenceAB = setA.difference(setB);
+console.log(differenceAB.values()); // [1]
+
+const differenceBA = setB.difference(setA);
+console.log(differenceBA.values()); // [4]
+// --------- Subset ----------
+
+setA = new Set();
+setA.add(1);
+setA.add(2);
+
+setB = new Set();
+setB.add(1);
+setB.add(2);
+setB.add(3);
+
+const setC = new Set();
+setC.add(2);
+setC.add(3);
+setC.add(4);
+
+console.log(setA.isSubsetOf(setB)); // true
+console.log(setA.isSubsetOf(setC)); // false
+```
+
+> ECMAScript2015 Set类, 注意使用时需要babel转换
+```
+const set = new Set()
+set.add(1)
+console.log(set.values()) // SetIterator {1}
+console.log(set.has(1)) // true
+console.log(set.size) // 1
+```
+
+
