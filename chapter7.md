@@ -205,12 +205,105 @@ console.log(setA.isSubsetOf(setC)); // false
 ```
 
 > ECMAScript2015 Set类, 注意使用时需要babel转换
+> ECMAScript2015 Set存储的时size属性，values返回的时Iterator
 ```
+const set = new Set();
+
+set.add(1);
+console.log(set.values()); // outputs @Iterator
+console.log(set.has(1)); // outputs true
+console.log(set.size); // outputs 1
+
+set.add(2);
+console.log(set.values()); // outputs [1, 2]
+console.log(set.has(2)); // true
+console.log(set.size); // 2
+
+set.delete(1);
+console.log(set.values()); // outputs [2]
+
+set.delete(2);
+console.log(set.values()); // outputs []
+
+const setA = new Set();
+setA.add(1);
+setA.add(2);
+setA.add(3);
+
+const setB = new Set();
+setB.add(2);
+setB.add(3);
+setB.add(4);
+
+// --------- Union ----------
+const union = (set1, set2) => {
+  const unionAb = new Set();
+  set1.forEach(value => unionAb.add(value));
+  set2.forEach(value => unionAb.add(value));
+  return unionAb;
+};
+console.log(union(setA, setB));
+
+console.log(new Set([...setA, ...setB]));
+
+// --------- Intersection ----------
+const intersection = (set1, set2) => {
+  const intersectionSet = new Set();
+  set1.forEach(value => {
+    if (set2.has(value)) {
+      intersectionSet.add(value);
+    }
+  });
+  return intersectionSet;
+};
+console.log(intersection(setA, setB));
+
+console.log(new Set([...setA].filter(x => setB.has(x))));
+
+// alternative - works on FF only
+// console.log(new Set([x for (x of setA) if (setB.has(x))]));
+
+// --------- Difference ----------
+const difference = (set1, set2) => {
+  const differenceSet = new Set();
+  set1.forEach(value => {
+    if (!set2.has(value)) {
+      differenceSet.add(value);
+    }
+  });
+  return differenceSet;
+};
+console.log(difference(setA, setB));
+
+console.log(new Set([...setA].filter(x => !setB.has(x))));
+
+// alternative  - works on FF only
+// console.log(new Set([x for (x of setA) if (!setB.has(x))]));
+
+```
+```
+// 注意上述内容在自创的set类中打印值为
 const set = new Set()
 set.add(1)
-console.log(set.values()) // SetIterator {1}
+console.log(set.values()) // [1]
 console.log(set.has(1)) // true
-console.log(set.size) // 1
+console.log(set.size) 
+// ƒ size() {
+//    return Object.keys(this.items).length
+// }
 ```
 
+> 使用扩展运算符,使得计算并集，交集，差集更简便（包含在上面的代码中，下面单独列出），包括以下三个步骤
+1. 将集合转化为数组
+2. 执行需要的运算
+3. 结果转换为集合
+```
+// --------- Union ----------
+console.log(new Set([...setA, ...setB]));
 
+// --------- Intersection ----------
+console.log(new Set([...setA].filter(x => setB.has(x))));
+
+// --------- Difference ----------
+console.log(new Set([...setA].filter(x => !setB.has(x))));
+```
