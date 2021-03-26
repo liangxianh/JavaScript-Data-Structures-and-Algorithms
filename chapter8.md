@@ -289,7 +289,9 @@ console.log(hash.toString());
 // {5 => [#Aethelwulf: aethelwulf@email.com]},{7 => [#Athelstan: athelstan@email.com]},{8 => [#Jasmine: jasmine@email.com]},{9 => [#Jake: jake@email.com]},{10 => [#Sargeras: sargeras@email.com]}
 ```
 > 散列集合：由一个集合构成，但是插入移除或者获取元素时，使用的是hashCode函数，不同之处在于不在添加键值对，而是只插入值没有键。eg 可以用散列结合来存储所有英文单词，此处不再实现；
+
 > 解决冲突，在上面使用过程中，一些键有相同的散列值，导致有很多重复的keyhash值，之前添加的值都被覆盖，处理这种冲突有几种方法：分离链接，线性探查和双散列法
+
 > 分离链接，该方法包括为散列表的每一个位置创建一个链接并将元素存储在里面，
 ```
 // 创建分离链表
@@ -427,6 +429,11 @@ console.log(hash.get('Sue')); // undefined
 console.log(hash.toString());
 // 5 => [#Jonathan: jonathan@email.com],[#Jamie: jamie@email.com],[#Aethelwulf: aethelwulf@email.com], 7 => [#Jack: jack@email.com],[#Athelstan: athelstan@email.com], 8 => [#Jasmine: jasmine@email.com], 9 => [#Jake: jake@email.com], 10 => [#Nathan: nathan@email.com],[#Sargeras: sargeras@email.com]
 ```
+> 线性探索，当想在表中某个位置添加元素时，如果索引position的位置被占用了，就尝试position+1的位置，如果position+1的位置也被占了则尝试position+2，以此类推，因为会将key value都保存，查找时可以通过key的不同进行查看；注意单移除一个值时，有两种方式：1 软删除（时间积累会降低效）; 2 需要检验是否有必要将一个或多个元素移动到之前的位置
+```
+
+```
+
 
 
 
