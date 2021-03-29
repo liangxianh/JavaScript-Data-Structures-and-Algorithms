@@ -431,9 +431,161 @@ console.log(hash.toString());
 ```
 > 线性探索，当想在表中某个位置添加元素时，如果索引position的位置被占用了，就尝试position+1的位置，如果position+1的位置也被占了则尝试position+2，以此类推，因为会将key value都保存，查找时可以通过key的不同进行查看；注意单移除一个值时，有两种方式：1 软删除（时间积累会降低效）; 2 需要检验是否有必要将一个或多个元素移动到之前的位置
 ```
-
+// 线性探索的put方法
+  putl(key, value){
+    if (key != null && value != null) {
+      const position = this.hashCode(key)
+      if (this.table[position] == null) {
+        this.table[position] = new ValuePair(key, value)
+      } else {
+        let index = position + 1
+        while (this.table[index] != null) {
+          index++
+        }
+        this.table[index] = new ValuePair(key, value)
+      }
+      return true
+    }
+    return false
+  }
+  getl(key) {
+    const position = this.hashCode(key)
+    if (this.table[position] != null) {
+      if (this.table[position].key === key) {
+        return this.table[position].value
+      } else {
+        let index = position + 1
+        while (this.table[index] != null && this.table[position].key != key) {
+          index++
+        }
+        if (this.table[index] != null && this.table[index].key === key) {
+          return this.table[index].value
+        }
+      }
+    }
+    return undefined
+  }
+  removel(key) {
+    const position = this.hashCode(key)
+    if (this.table[position] != null) {
+      if (this.table[position].key === key) {
+        delete this.table[position].value
+        this.verifyRemoveSideEffect(key, position)
+        return true
+      }
+      let index = position + 1
+      while (this.table[index] != null && this.table[position].key != key) {
+        index++
+      }
+      if (this.table[index] != null && this.table[index].key === key) {
+        delete this.table[index].value
+        this.verifyRemoveSideEffect(key, position)
+        return true
+      }
+    }
+    return false
+  }
+  // 由于不知道在散列表的不同位置上是否存在具有相同hash的元素，需要验证删除操作是否有副作用，如果有需要将冲突的元素移动到一个之前的位置
+  verifyRemoveSideEffect(key, removedPosition) {
+    const hash = this.hashCode(key)
+    let index = removedPosition + 1
+    while (this.table[index] != null) {
+      const posHash = this.hashCode(this.table[index].key)
+      if (posHash < hash || posHash <= removedPosition) {
+        this.table[removedPosition] = this.table[index]
+        delete this.table[index]
+        removedPosition = index
+      }
+      index++
+    }
+  }
+```
+> 创建更好的散列函数，之前创建的散列函数 lose lose会产出太多的冲突,下面的方式可以很好的降低这种冲突
+```
+djb2HashCode(key) {
+  const tableKey = this.toStrFn(key)
+  // 5381这个质数，在测试中5381只是在测试中导致更少的碰撞和更好的雪崩数量。您几乎可以在每个哈希算法中找到“魔术常数”。
+  let hash = 5381
+  for (let i = 0; i< tableKey.length; i++) {
+    hash = (hash * 33) + tableKey.charCodeAt(i)
+  }
+  return hash % 1013
+}
+console.log(hash.hashCode('Ygritte') + ' - Ygritte'); // 4 - Ygritte   ----> 807 - Ygritte
+console.log(hash.hashCode('Jonathan') + ' - Jonathan'); // 5 - Jonathan   ----> 288 - Jonathan
+console.log(hash.hashCode('Jamie') + ' - Jamie'); // 5 - Jamie   ----> 962 - Jamie
+console.log(hash.hashCode('Jack') + ' - Jack'); // 7 - Jack   ----> 619 - Jack
+console.log(hash.hashCode('Jasmine') + ' - Jasmine'); // 8 - Jasmine   ----> 275 - Jasmine
+console.log(hash.hashCode('Jake') + ' - Jake'); // 9 - Jake   ----> 877 - Jake
+console.log(hash.hashCode('Nathan') + ' - Nathan'); // 10 - Nathan   ----> 223 - Nathan
+console.log(hash.hashCode('Athelstan') + ' - Athelstan'); // 7 - Athelstan   ----> 925 - Athelstan
+console.log(hash.hashCode('Sue') + ' - Sue'); // 5 - Sue   ----> 502 - Sue
+console.log(hash.hashCode('Aethelwulf') + ' - Aethelwulf'); // 5 - Aethelwulf   ----> 149 - Aethelwulf
+console.log(hash.hashCode('Sargeras') + ' - Sargeras'); // 10 - Sargeras   ----> 711 - Sargeras
 ```
 
+> ES2015 Map 类
+```
+const map = new Map();
+
+map.set('Gandalf', 'gandalf@email.com');
+map.set('John', 'johnsnow@email.com');
+map.set('Tyrion', 'tyrion@email.com');
+
+console.log(map.has('Gandalf')); // true
+console.log(map.size); // 3
+
+console.log(map.keys()); // MapIterator {"Gandalf", "John", "Tyrion"}
+console.log(map.values()); // MapIterator {"gandalf@email.com", "johnsnow@email.com", "tyrion@email.com"}
+console.log(map.get('Tyrion')); // tyrion@email.com
+
+map.delete('John');
+
+console.log(map.keys()); // MapIterator {"Gandalf", "Tyrion"}
+console.log(map.values()); // MapIterator {"gandalf@email.com", "tyrion@email.com"}
+```
+
+> ES2015 WeakMap类和WeakSet类，分别是Map和Set两类的弱化版本，区别如下：
+
+1. WeakMap类和WeakSet类没有entries，keys，values等方法，必须用键才可以取出值
+2. 只能用对象做为键
+```
+const map = new WeakMap();
+
+const ob1 = { name: 'Gandalf' };
+const ob2 = { name: 'John' };
+const ob3 = { name: 'Tyrion' };
+
+map.set(ob1, 'gandalf@email.com');
+map.set(ob2, 'johnsnow@email.com');
+map.set(ob3, 'tyrion@email.com');
+
+console.log(map.has(ob1)); // true
+console.log(map.has(ob2)); // true
+console.log(map.has(ob3)); // true
+
+console.log(map.get(ob3)); // tyrion@email.com
+
+map.delete(ob2);
+console.log(map.has(ob2)); // false
+----------------------------------
+var set = new WeakSet();
+
+const ob1 = { name: 'Gandalf' };
+const ob2 = { name: 'John' };
+const ob3 = { name: 'Tyrion' };
+
+set.add(ob1);
+set.add(ob2);
+set.add(ob3);
+
+console.log(set.has(ob1)); // true
+console.log(set.has(ob2)); // true
+console.log(set.has(ob3)); // true
+
+set.delete(ob2);
+console.log(set.has(ob2)); // false
+```
 
 
 
