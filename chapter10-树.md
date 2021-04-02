@@ -1,5 +1,6 @@
 ## 树
 
+### 1 排序树
 > 创建树
 ```
 function defaultCompare (e,n){
@@ -158,7 +159,6 @@ class BinarySearchTree {
 
 > 使用树
 ```
-
 const tree = new BinarySearchTree()
 tree.insert(11)
 tree.insert(7)
@@ -193,5 +193,180 @@ tree.remove(6)
 // tree.inOrderTraverse(printNode)
 tree.remove(5)
 ```
+
+### 2 AVL树
 > 自平衡树，上面创建的树没有进行控制，使得左右树的深度差值可能会很大，为了解决这个问题，引入了自平衡树AVL（Adelson-Velskii-Landi）
-> AVL在添加或删除节点时会尝试保持自平衡,左子树和右子树高度最多相差1
+> AVL在添加或删除节点时会尝试保持自平衡,左子树和右子树高度最多相差1,下面进行创建自平衡树并添加方法
+```
+// 创建自平衡树,也是一种bst树，只有覆盖原有的insert insertNode 和removeNode即可
+// 节点的高度和平衡因子
+const BalanceFactor = {
+    UNBALANCED_RIGHT: 1,
+    SLIGHTLY_UNBALANCED_RIGHT: 2,
+    BALANCED: 3,
+    SLIGHTLY_UNBALANCED_LEFT: 4,
+    UNBALANCED_LEFT: 5
+}
+class AVLTree extends BinarySearchTree {
+  constructor(compareFn = defaultCompare) {
+    super(compareFn)
+    this.compareFn = compareFn
+    this.root = null
+  }
+  getNodeHeight(node) {
+    if (node == null) {
+      return -1
+    }
+    const max = Math.max(this.getNodeHeight(node.left), this.getNodeHeight(node.right))
+    // console.log(max)
+    return max + 1
+  }
+  
+  // 计算节点的平衡因子
+  getBalanceFactor(node) {
+    const heightDifference = this.getNodeHeight(node.left) - this.getNodeHeight(node.right)
+    switch(heightDifference) {
+      case -2:
+        return BalanceFactor.UNBALANCED_RIGHT;
+      case -1:
+        return BalanceFactor.SLIGHTLY_UNBALANCED_RIGHT;
+      case 1:
+        return BalanceFactor.SLIGHTLY_UNBALANCED_LEFT;
+      case 2:
+        return BalanceFactor.UNBALANCED_LEFT;
+      default:
+        return BalanceFactor.BALANCED;
+    }
+  }
+  /*
+  进行平衡操作
+  左左（LL）：单纯的向右旋转
+  右右（RR）：单纯的向左旋转
+  左右（LR）：向右的双旋转（先LL，再RR）
+  右左（RL）：向左的双旋转（先RR，在LL）
+  */
+  // 左左操作 向右单旋转:左侧子节点高于右侧且左侧子节点也是平衡的或者左侧较重
+  rotationLL(node) {
+    const temp = node.left
+    node.left = temp.right
+    temp.right = node;
+    return temp
+  }
+  // 右右 单纯的左旋转：右侧子节点高度大于左侧子节点高度且右侧的子节点也是平衡或者右侧较重
+  rotationRR(node) {
+    const temp = node.right
+    node.right = temp.left
+    temp.left = node
+    return temp
+  }
+  // 左右：向右双旋转先LL在RR：左侧子节点高度大于右侧，并且左侧子节点右侧较重
+  // 先LL在RR
+  rotationLR(node) {
+    node.left = this.rotationRR(node.left)
+    return this.rotationLL(node)
+  }
+  // 右左：向左双旋转先RR在LL
+  rotationRL(node) {
+    node.right = this.rotationLL(node.right)
+    return this.rotationRR(node)
+  }
+  // 插入节点
+  insertA(key) {
+    this.root = this.insertNodeA(this.root, key)
+  }
+  insertNodeA(node, key) {
+    if (node == null) {
+      return new Node(key)
+    } else if (this.compareFn(key, node.key) === -1){
+      node.left = this.insertNodeA(node.left, key)
+    }else if (this.compareFn(key, node.key) === 1){
+      node.right = this.insertNodeA(node.right, key)
+    } else {
+      return node //重复的键值
+    }
+    const balanceFactor = this.getBalanceFactor(node)
+    // leftH - rightH = 2  即左侧高
+    if (balanceFactor === BalanceFactor.UNBALANCED_LEFT) {
+      if (this.compareFn(key, node.left.key) === -1) {
+        return this.rotationLL(node)
+      } else {
+        return this.rotationLR(node)
+      }
+    }
+    // leftH - rightH = -2  即右侧高
+    if (balanceFactor === BalanceFactor.UNBALANCED_RIGHT) {
+      if (this.compareFn(key, node.right.key) === 1) {
+        return this.rotationRR(node)
+      } else {
+        return this.rotationRL(node)
+      }
+    }
+    return node
+  }
+  // 在AVL中移除节点
+  removeNode(node, key) {
+    node = super.removeNode(node, key)
+    if (node == null) {
+      return null
+    }
+    // 检测数是否平衡
+    const balanceFactor = this.getBalanceFactor(node)
+    // leftH - rightH = 2  即左侧高
+    if (balanceFactor === BalanceFactor.UNBALANCED_LEFT) {
+      const balanceFactorLeft = this.getBalanceFactor(node.left)
+      // left 平衡因子为默认值的 || leftH-rightH = 1
+      if (balanceFactorLeft === BalanceFactor.BALANCED ||
+        balanceFactorLeft === BalanceFactor.SLIGHTLY_UNBALANCED_LEFT) {
+          return this.rotationLL(node)
+        }
+      // leftH-rightH = -1
+      if(balanceFactorLeft === BalanceFactor.SLIGHTLY_UNBALANCED_RIGHT) {
+        return this.rotationLR(node)
+      }
+      if (this.compareFn(key, node.left.key) === -1) {
+        return this.rotationLL(node)
+      } else {
+        return this.rotationLR(node.left)
+      }
+    }
+    // leftH - rightH = -2  即右侧高
+    if (balanceFactor === BalanceFactor.UNBALANCED_RIGHT) {
+      const balanceFactorRight = this.getBalanceFactor(node.right)
+      // left 平衡因子为默认值的 || leftH-rightH = -1
+      if (balanceFactorRight === BalanceFactor.BALANCED ||
+        balanceFactorRight === BalanceFactor.SLIGHTLY_UNBALANCED_RIGHT) {
+          return this.rotationRR(node)
+        }
+      // leftH-rightH = 1
+      if(balanceFactorRight === BalanceFactor.SLIGHTLY_UNBALANCED_LEFT) {
+        return this.rotationRL(node.right)
+      }
+    }
+    return node
+  }
+}
+```
+
+> AVL树的使用
+```
+const avlTree = new AVLTree()
+avlTree.insertA(70)
+avlTree.insertA(50)
+avlTree.insertA(80)
+avlTree.insertA(72)
+avlTree.insertA(90)
+
+avlTree.insertA(75)
+avlTree.insertA(77)
+avlTree.insertA(78)
+console.log(avlTree)
+// 删除有点疑问？删除后怎么进行排序的
+avlTree.remove(80)
+console.log(avlTree)
+```
+
+### 3 红黑树
+> 同AVL相同，红黑树也是一个自平衡二叉树，因AVL树插入和移除节点会造成旋转，顾我们需要一个包含多次插入和删除的自平衡树，红黑树是比较好的；当删除和插入频率较低avl树较好；
+> 
+
+
