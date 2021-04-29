@@ -2,7 +2,7 @@
 
 #### 排序算法
 
-> 冒泡排序：比较相邻的两个项，如果第一个比第二个大则交换他们；
+> 冒泡排序：比较相邻的两个项，如果第一个比第二个大则交换他们；复杂度O（n2）
 ```
 function defaultCompare (e,n){
   return e === n ? 0 : e < n ? -1 : 1
@@ -55,7 +55,7 @@ const array2 = bubbleSort2(createNonSortedArray());
 console.log(array1, array2);
 ```
 
-> 选择排序:找到最小值并将其放置在第一位，次小值放于第二位
+> 选择排序:找到最小值并将其放置在第一位，次小值放于第二位;复杂度O（n2）；
 ```
 function SelectionSort(array, compareFn = defaultCompare) {
   const { length } = array
@@ -77,7 +77,24 @@ const array = SelectionSort(createNonSortedArray());
 console.log(array);
 ```
 
-> 插入排序
+> 插入排序:每次排一个数组项，,排序小型数组时，选择排序比冒泡和选择好些
+```
+function InsertSort(array, compareFn = defaultCompare) {
+  const { length } = array
+  let temp;
+  for (let i = 0; i < length - 1; i++) {
+    let j = i;
+    temp = array[i]
+    while(j > 0 && compareFn(array[j -1], temp) === 1) {
+      array[j] = array[j - 1]
+      j--
+    }
+    array[j] = temp
+  }
+  return array;
+}
+```
+> 归并排序，一种分而治之的算法，较前3种性能更好，复杂度O(nlog(n))
 ```
 
 ```
