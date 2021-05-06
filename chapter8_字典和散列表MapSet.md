@@ -525,6 +525,10 @@ console.log(hash.hashCode('Sargeras') + ' - Sargeras'); // 10 - Sargeras   ---->
 ```
 
 > ES2015 Map 类
+
+1. Map的键可以是任意类型
+2. Map的键实际和内存地址绑定，只有内存地址不一样，就视为两个键
+3. Map可以被遍历
 ```
 const map = new Map();
 
@@ -547,8 +551,42 @@ console.log(map.values()); // MapIterator {"gandalf@email.com", "tyrion@email.co
 
 > ES2015 WeakMap类和WeakSet类，分别是Map和Set两类的弱化版本，区别如下：
 
-1. WeakMap类和WeakSet类没有entries，keys，values等方法，必须用键才可以取出值
-2. 只能用对象做为键
+1. WeakMap类和WeakSet类没有entries，keys，values等方法，必须用键才可以取出值，即不能被遍历；
+2. 只能用对象做为键null除外；
+3. WeakMap的键是若引用的，键所指向的对象可以被垃圾回收；
+
+   > 垃圾回收其中之一的方式是标记清除，在我们的开发过程中，如果我们想要让垃圾回收器回收某一对象，就将对象的引用直接设置为 null；
+   ```
+   var a = {}; // {} 可访问，a 是其引用
+   a = null; // 引用设置为 null
+   // {} 将会被从内存里清理出去
+   ```
+   > 但如果一个对象被多次引用时，例如作为另一对象的键、值或子元素时，将该对象引用设置为 null 时，该对象是不会被回收的，依然存在；
+   ```
+   var a = {}; 
+   var arr = [a];
+   a = null; 
+   console.log(arr)
+   // [{}]
+   ```
+   > 如果作为 Map 的键喃？如果想让 a 置为 null 时，该对象被回收，该怎么做喃？ES6 考虑到了这一点，推出了：WeakMap 。它对于值的引用都是不计入垃圾回收机制的，所以名字里面才会有一个"Weak"，表示这是弱引用（对对象的弱引用是指当该对象应该被GC回收时不会阻止GC的回收行为）。
+   ```
+   var a = {}; 
+   var map = new Map();
+   map.set(a, '三分钟学前端')
+   a = null; 
+   console.log(map.keys()) // MapIterator {{}}
+   console.log(map.values()) // MapIterator {"三分钟学前端"}
+   ```
+   > 如果想让 a 置为 null 时，该对象被回收，该怎么做喃？ES6 考虑到了这一点，推出了：WeakMap 。它对于值的引用都是不计入垃圾回收机制的，所以名字里面才会有一个"Weak"，表示这是弱引用（对对象的弱引用是指当该对象应该被GC回收时不会阻止GC的回收行为）。
+   ```
+   var a = {}; 
+   var map = new WeakMap();
+   map.set(a, '三分钟学前端')
+   map.get(a)
+   a = null;
+   ```
+
 ```
 const map = new WeakMap();
 
