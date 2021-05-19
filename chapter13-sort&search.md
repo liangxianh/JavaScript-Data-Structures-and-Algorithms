@@ -176,8 +176,61 @@ var quickSort = function(arr) {
 　　return quickSort(left).concat([pivot], quickSort(right));
 };
 ```
+> 计数排序，复杂度O(n+k),只适用于整数的排序，需要更多的内存来存放临时数组；
+```
+function countingSort(array) {
+  if (array.length < 2) {
+    return array
+  }
+  const maxValue = findMaxValue(array)
+  const counts = new Array(maxValue)
+  console.log('counts===', counts)
+  array.forEach(element => {
+    if (!counts[element]) {
+      counts[element] = 0
+    }
+    counts[element]++
+  })
+
+  let sortedIndex = 0
+  counts.forEach((count, i) => {
+    while(count > 0) {
+      array[sortedIndex++] = i
+      count--
+    }
+  })
+  return array
+}
+function findMaxValue(array) {
+  let max = array[0]
+  for(let i = 1; i< array.length; i++) {
+    if(array[i] > max){
+      max = array[i]
+    }
+  }
+  return max
+}
+const array = countingSort([3,5,11,6,4,12,9]);
+console.log(array);
+--------------上面的流程可以用下面的进行说明
+/**
+  array = [3,5,11,6,4,12,9]
+  accounts = [ , , ,0,0,0,0, , ,0, , 0, 0]
+  对应index   0 1 2 3 4 5 6 7 8 9 10 11 12
+  执行counts[element]++
+  accounts = [,,,1,1,1,1,,,1,,1,1]
+  sortedIndex 从0开始 不断++
+  array一次赋值accouts中为1的元素的index
+*/
+```
 
 #### 搜索算法
+> 顺序搜索，将每一个数据结构中的元素和我们要查找的元素做比较，是一种最低效的搜索算法
+> 二分搜索，要求被搜索的数据已排序，类似猜数游戏，某人想着1~100的数组，我们没回应一个数就得到一个值是高了低了或者对了
+ 1. 选择排序后数组（假设由小到大排序）中间值
+ 2. 若选中值是待搜索值，name算法执行完毕；
+ 3. 若选择的值比待搜索值小，则返回步骤1，并在选中值的右侧子数组中查找；
+ 4. 若选择的值比待搜索值大，则返回步骤1，并在选中值的左侧子数组中查找；
 ```
 
 ```
