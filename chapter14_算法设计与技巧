@@ -1,9 +1,98 @@
 ## 算法设计与技巧
 
-### 分而治之
+### 一 分而治之
 > 分解员问题为多个子问题
 > 解决子问题，用返回解决子问题的方式的递归算法
 > 组合这些子问题的解决方式，得到原问题的解
+之前13章节的快速排序就是分而治之的实现，二分查找也可以使用分而治之的方式来实现
 
+```
+function defaultCompare (e,n){
+  return e === n ? 0 : e < n ? -1 : 1
+}
+function binarySearchRecursive(array, value, low, high, compareFn = defaultCompare) {
+  if (low <= high) {
+    const mid = Math.floor((low + high) / 2)
+    const element = array[mid]
+    if (compareFn(element, value) === -1) {
+      return binarySearchRecursive(array, value, mid+1, high, compareFn)
+    } else if (compareFn(element, value) === 1) {
+      return binarySearchRecursive(array, value, low, mid-1, compareFn)
+    } else {
+      return mid
+    }
+  }
+  // 若没有找到该值
+  return -1
+}
+function binarySearch(array, value, compareFn = defaultCompare) {
+  const sortedArray = quickSort();
+  const low = 0
+  const high = sortedArray.length - 1
+  return binarySearchRecursive(array, value, low, high, compareFn)
+}
 
+const array = [1,3,4,5,6,8,12,17,19,21,22,26]
+console.log('--------', binarySearch(array, 12))
+```
 
+### 二 动态规划，是一种将复杂问题分解成更小的子问题来解决的（如斐波那契问题）
+> 定义子问题
+> 实现要反复执行来解决子问题的部分
+> 识别并求解出基线条件
+
+能用动态规划解决的一些著名问题
+1. 最少硬币找零问题，给出要找零的钱数，以及可以用的硬币的面额d1,d2,...,dn及数量，找出有多少种找零的方法，找到所需最少硬币个数的方法；
+```
+// 最小硬币问题,coins代表面额值的数组eg[1,3,4]，amount=6
+function minCoinChange(coins, amount){
+  const cache = []
+  const makeChange = (value) => {
+    if (!value) {
+      return []
+    }
+    if (cache[value]) {
+      return cache[value]
+    }
+    let min = []
+    let newMin
+    let newAmount
+    for (let i = 0; i < coins.length; i++) {
+      const coin = coins[i]
+      newAmount = value - coin
+      if (newAmount >= 0) {
+        newMin = makeChange(newAmount)
+      }
+      if (newAmount >= 0 && 
+        (newMin.length < min.length -1 || !min.length) &&
+        (newMin.length || !newAmount)
+        ) {
+          min = [coin].concat(newMin)
+          console.log('new Min ', min, ' for', amount)
+      }
+    }
+    return (cache[value] = min)
+  }
+  return makeChange(amount)
+}
+// console.log(minCoinChange([1, 5, 10, 25], 36))
+console.log(minCoinChange([1, 3, 4], 6))
+// new Min  [1]  for 6
+// new Min  (2) [1, 1]  for 6
+// new Min  (3) [1, 1, 1]  for 6
+// new Min  [3]  for 6
+// new Min  (2) [1, 3]  for 6
+// new Min  [4]  for 6
+// new Min  (2) [1, 4]  for 6
+// new Min  (3) [1, 1, 4]  for 6
+// new Min  (2) [3, 3]  for 6
+// (2) [3, 3]
+```
+
+2. 背包问题
+
+3. 最长公共子序列
+
+4. 矩阵相乘
+
+### 三 贪心算法
