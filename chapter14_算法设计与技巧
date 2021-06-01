@@ -89,8 +89,54 @@ console.log(minCoinChange([1, 3, 4], 6))
 // (2) [3, 3]
 ```
 
-2. 背包问题
+2. 背包问题:给定一个固定大小，能够携重量W的背包，以及一组有价值和重量的物品，找出最佳方案使得装入背包的物品总重量不超过W，且总价值最大；
+```
+function findValues(n, capacity, ks, weights,values) {
+  let i = n;
+  let k = capacity
+  console.log('构成解的物品：')
+  while(i > 0 && k > 0){
+    if(ks[i][k] != ks[i-1][k]) {
+      console.log(`物品${i}可以是解的一部分w,v:${weights[i-1]}, ${values[i-1]}`)
+      i--
+      k -= ks[i][k]
+    } else {
+      i--
+    }
+  }
+}
+function knapSack(capacity, weights, values, n) {
+  const ks = []
+  for (let i = 0; i <= n; i++) {
+    ks[i] = []
+  }
 
+  for (let i = 0; i <= n; i++) {
+    for (let w = 0; w <= capacity; w++) {
+      if (i === 0 || w === 0) {
+        ks[i][w] = 0
+      } else if (weights[i-1] <= w) {
+        const a = values[i-1] + ks[i-1][w-weights[i-1]]
+        const b = ks[i-1][w]
+        ks[i][w]  = a > b ? a : b
+      } else {
+        ks[i][w] = ks[i-1][w]
+      }
+    }
+  }
+  findValues(n, capacity, ks, weights,values)
+  return ks[n][capacity]
+}
+const values = [3,4,5],
+weights = [2,3,4],
+capacity = 5,
+n = values.length
+console.log(knapSack(capacity, weights, values, n))
+// 构成解的物品：
+// 物品2可以是解的一部分w,v:3, 4
+// 物品1可以是解的一部分w,v:2, 3
+// 7
+```
 3. 最长公共子序列
 
 4. 矩阵相乘
