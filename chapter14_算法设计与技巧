@@ -137,7 +137,7 @@ console.log(knapSack(capacity, weights, values, n))
 // 物品1可以是解的一部分w,v:2, 3
 // 7
 ```
-3. 最长公共子序列
+3. 最长公共子序列（LCS）：找出两个字符串序列的最长子序列长度，eg  串1：acbaed  串二：abcadf ，LCS:acad 在串一中 有ac a d，而串2中有a cad；
 
 4. 矩阵相乘
 
